@@ -1,91 +1,32 @@
 const { ethers } = require("ethers");
-require("dotenv").config();
+const fs = require("fs");
+
+// Dirección del contrato y ABI
+const deployments = JSON.parse(fs.readFileSync("./deployments.json", "utf8"));
+const contractAddress = deployments.contractAddress;
+const contractABI = JSON.parse(fs.readFileSync("./artifacts/contracts/AdvancedContract.sol/AdvancedContract.json", "utf8")).abi;
 
 async function main() {
-    const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545"); // Cambia si usas otra red
-    const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
-    const contractABI = [
-        {
-            "inputs": [],
-            "stateMutability": "nonpayable",
-            "type": "constructor"
-        },
-        {
-            "anonymous": false,
-            "inputs": [
-                { "indexed": true, "internalType": "address", "name": "previousOwner", "type": "address" },
-                { "indexed": true, "internalType": "address", "name": "newOwner", "type": "address" }
-            ],
-            "name": "OwnershipTransferred",
-            "type": "event"
-        },
-        {
-            "anonymous": false,
-            "inputs": [
-                { "indexed": false, "internalType": "uint256", "name": "newValue", "type": "uint256" }
-            ],
-            "name": "ValueSet",
-            "type": "event"
-        },
-        {
-            "inputs": [],
-            "name": "getOwner",
-            "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [],
-            "name": "getValue",
-            "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [],
-            "name": "owner",
-            "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [{ "internalType": "uint256", "name": "_value", "type": "uint256" }],
-            "name": "setValue",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "inputs": [{ "internalType": "address", "name": "newOwner", "type": "address" }],
-            "name": "transferOwnership",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "inputs": [],
-            "name": "value",
-            "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-            "stateMutability": "view",
-            "type": "function"
-        }
-    ];
+    // Configuración del proveedor y signer
+    const provider = new ethers.providers.JsonRpcProvider("http://127.0.0.1:8545");
+    const wallet = new ethers.Wallet("PRIVATE_KEY_HERE", provider); // Reemplaza PRIVATE_KEY_HERE con una clave privada válida
 
-    // Conectar con el contrato
-    const signer = provider.getSigner(0); // Cambia el índice si usas otra cuenta
-    const contract = new ethers.Contract(contractAddress, contractABI, signer);
+    // Instanciación del contrato
+    const contract = new ethers.Contract(contractAddress, contractABI, wallet);
 
-    // Leer el valor inicial
-    const initialValue = await contract.getValue();
-    console.log("Valor inicial:", initialValue);
+    // Ejemplo de interacción
+    console.log("Llamando a una función del contrato...");
 
-    // Establecer un nuevo valor
-    const tx = await contract.setValue(42);
+    // Llamada a una función de lectura (view)
+    const value = await contract.getValue(); // Reemplaza getValue con la función de tu contrato
+    console.log("Valor recuperado del contrato:", value);
+
+    // Llamada a una función de escritura
+    const tx = await contract.setValue("Nuevo valor"); // Reemplaza setValue con una función válida
     await tx.wait();
-    console.log("Nuevo valor establecido:", await contract.getValue());
+    console.log("Transacción completada:", tx.hash);
 }
 
 main().catch((error) => {
-    console.error("Error:", error);
-    process.exitCode = 1;
+    console.error("Error al interactuar con el contrato:", error);
 });
