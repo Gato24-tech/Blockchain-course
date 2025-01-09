@@ -1,40 +1,41 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.24;
+pragma solidity ^0.8.0;
 
 contract AdvancedContract {
-    address public owner;
-    uint256 public value; // Variable de estado para almacenar valores.
-    
-    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
-    event ValueSet(uint256 newValue); // Evento  para cambios de valor.
+    uint256 private storedValue;
+    uint256[] private valueHistory; // Array para almacenar el historial de valores
+
+    // Evento para registrar actualizaciones del valor
+    event ValueUpdated(uint256 oldValue, uint256 newValue);
 
     constructor() {
-        owner = msg.sender;
-        emit OwnershipTransferred(address(0), owner);
+        storedValue = 0;
+        valueHistory.push(storedValue);
     }
 
-   modifier onlyOwner() {
-    require(msg.sender == owner, "Not authorized: Only owner can set value");
-    _;
-}
-
-
-    function getOwner() public view returns (address) {
-        return owner;
-    }
-
-    function setValue(uint256 _value) public onlyOwner {
-        value = _value; // Asigna el valor.
-        emit ValueSet(_value); // Emite el evento.
-    }
+    // Función para obtener el valor almacenado
     function getValue() public view returns (uint256) {
-    return value;
-}
-function transferOwnership(address newOwner) public onlyOwner{
-    require(newOwner !=address(0), "Invalid new owner address");
-    emit OwnershipTransferred(owner, newOwner);
-    owner = newOwner;
+        return storedValue;
     }
- 
+
+    // Función para actualizar el valor almacenado
+    function setValue(uint256 newValue) public {
+        uint256 oldValue = storedValue;
+        storedValue = newValue;
+        valueHistory.push(newValue); // Guardar en el historial
+        emit ValueUpdated(oldValue, newValue); // Emitir evento
+    }
+
+    // Función para incrementar el valor almacenado
+    function incrementValue(uint256 increment) public {
+        uint256 oldValue = storedValue;
+        storedValue += increment;
+        valueHistory.push(storedValue); // Guardar en el historial
+        emit ValueUpdated(oldValue, storedValue); // Emitir evento
+    }
+
+    // Función para obtener el historial de valores
+    function getValueHistory() public view returns (uint256[] memory) {
+        return valueHistory;
+    }
 }
-   
