@@ -1,23 +1,28 @@
-// scripts/interact-advanced.js
 const { ethers } = require("hardhat");
 
 async function main() {
-    const AdvancedContract = await ethers.getContractAt("AdvancedContract", "0x5FbDB2315678afecb367f032d93F642f64180aa3");
-    await AdvancedContract.getValue(); // Debería devolver un valor predeterminado si está funcionando correctamente.
-    
+    const deployments = require('../deployments.json');
+    const contractAddress = deployments.address;
 
-    // Llamada a la función getValue (debería devolver 0 inicialmente)
-    const initialValue = await AdvancedContract.getValue();
-    console.log("Valor inicial almacenado:", initialValue.toString());
+    const AdvancedContract = await ethers.getContractFactory("AdvancedContract");
+    const contract = AdvancedContract.attach(contractAddress);
 
-    // Configurar un nuevo valor
-    const tx = await AdvancedContract.setValue(42);
-    await tx.wait(); // Esperar la confirmación de la transacción
-    console.log("Se configuró un nuevo valor: 42");
+    // Obtener el valor inicial
+    let value = await contract.getValue();
+    console.log(`Valor inicial almacenado: ${value}`);
 
-    // Verificar el nuevo valor almacenado
-    const newValue = await AdvancedContract.getValue();
-    console.log("Nuevo valor almacenado:", newValue.toString());
+    // Actualizar el valor
+    await contract.setValue(42);
+    console.log(`Nuevo valor almacenado: 42`);
+
+    // Incrementar el valor
+    await contract.incrementValue(10);
+    value = await contract.getValue();
+    console.log(`Valor después de incrementar: ${value}`);
+
+    // Obtener el historial de valores
+    const history = await contract.getValueHistory();
+    console.log(`Historial de valores: ${history}`);
 }
 
 main().catch((error) => {
