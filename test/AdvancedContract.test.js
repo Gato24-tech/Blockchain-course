@@ -14,16 +14,17 @@ describe("AdvancedContract with Access Control", function () {
         await contract.waitForDeployment(); // Cambiado para ethers.js v6
     });
 
-    it("Should set the owner as the deployer", async function () {
-        // Verificar que el propietario es la cuenta que desplegó el contrato
-        expect(await contract.getOwner()).to.equal(owner.address);
+    it("Should initialize with a value of 0", async function () {
+        // Verificar que el valor inicial es 0
+        expect(await contract.getValue()).to.equal(0);
     });
 
-    it("Should allow the owner to set a value", async function () {
+    it("Should allow the owner to set a value and emit an event", async function () {
         // El propietario establece un valor
-        await expect(contract.connect(owner).setValue(100))
-            .to.emit(contract, "ValueSet")
-            .withArgs(100);
+        const newValue = 100;
+        await expect(contract.connect(owner).setValue(newValue))
+            .to.emit(contract, "ValueUpdated") //Cambio el nombre del evento
+            .withArgs(0, newValue); //Comprobar oldValue y newValue
     });
 
     it("Should not allow non-owners to set a value", async function () {
@@ -35,7 +36,8 @@ describe("AdvancedContract with Access Control", function () {
 
     it("Should allow anyone to get the value", async function () {
         // El propietario establece un valor
-        await contract.connect(owner).setValue(100);
+        const newValue = 100;
+        await contract.connect(owner).setValue(newValue);
 
         // Cualquier usuario puede leer el valor
         expect(await contract.connect(otherUser).getValue()).to.equal(100);

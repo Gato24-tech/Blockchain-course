@@ -28,11 +28,11 @@ describe("AdvancedContract Basic Tests", function () {
         expect(await contract.getValue()).to.equal(newValue);
     });
 
-    it("Should emit ValueSet event when the value is updated", async function () {
+    it("Should emit ValueUpdated event when the value is updated", async function () {
         const newValue = 200;
         await expect(contract.connect(owner).setValue(newValue))
-            .to.emit(contract, "ValueSet")
-            .withArgs(newValue);
+            .to.emit(contract, "ValueUpdated")
+            .withArgs(0, newValue); // Comparar oldValue (0) y newValue (200)
     });
 
     it("Should not allow non-owners to update the value", async function () {

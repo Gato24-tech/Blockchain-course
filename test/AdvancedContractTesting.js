@@ -22,12 +22,12 @@ describe("AdvancedContract Testing", function () {
         expect(initialValue).to.equal(0);
     });
 
-    it("Should emit an event when a value is set", async function () {
+    it("Should emit an event when a value is updated", async function () {
         // Probar la emisión del evento al establecer un nuevo valor
         const newValue = 42;
         await expect(contract.connect(owner).setValue(newValue))
-            .to.emit(contract, "ValueSet")
-            .withArgs(newValue);
+            .to.emit(contract, "ValueUpdated") // Cambiado el nombre del evento
+            .withArgs(0, newValue); // Comprobar oldValue y newValue
     });
 
     it("Should allow only the owner to set a value", async function () {
