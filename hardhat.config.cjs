@@ -10,7 +10,7 @@ module.exports = {
       url: "http://127.0.0.1:8545", // Configuración de la red local
     },
     arbitrumSepolia: {
-      url: `https://arb-goerli.g.alchemy.com/v2/${ALCHEMY_API_KEY}`,ALCHEMY_API_KEY, // Dirección del nodo remoto (Alchemy)
+      url: `${ALCHEMY_API_KEY}`, // Nota: Esto utiliza la variable del archivo .env
       accounts: [PRIVATE_KEY], // Llave privada de la wallet
     },
   },
