@@ -6,12 +6,17 @@ contract AdvancedContract {
     uint256[] private valueHistory; // Historial de valores
     address private owner; // Dirección del propietario
 
-    // Evento para registrar actualizaciones del valor
+    // Eventos para registrar acciones
     event ValueUpdated(uint256 oldValue, uint256 newValue);
+    event Incremented(uint256 oldValue, uint256 increment, uint256 newValue);
+    event UnauthorizedAccess(address sender);
 
     // Modificador para restringir acceso solo al propietario
     modifier onlyOwner() {
-        require(msg.sender == owner, "Not authorized: Only owner can set value");
+        if (msg.sender != owner) {
+            emit UnauthorizedAccess(msg.sender);
+            revert("Not authorized: Only owner can set value");
+        }
         _;
     }
 
@@ -27,14 +32,15 @@ contract AdvancedContract {
         return owner;
     }
 
-    // Función para obtener el valor almacenado
+    // Función para obtener el valor almacenado 
     function getValue() public view returns (uint256) {
         return storedValue;
     }
 
-    // Función para actualizar el valor almacenado (solo propietario)
+    // Función para establecer un nuevo valor (solo propietario)
     function setValue(uint256 newValue) public onlyOwner {
-        uint256 oldValue = storedValue;
+        require(newValue <= 1000, "Value exceeds allowed limit");
+        uint256 oldValue = storedValue; // Guardamos el valor antiguo
         storedValue = newValue;
         valueHistory.push(newValue); // Guardar en el historial
         emit ValueUpdated(oldValue, newValue); // Emitir evento
@@ -42,10 +48,12 @@ contract AdvancedContract {
 
     // Función para incrementar el valor almacenado (solo propietario)
     function incrementValue(uint256 increment) public onlyOwner {
-        uint256 oldValue = storedValue;
+        require(increment <= 1000, "Increment exceeds the allowed limit"); // Verifica el incremento mismo
+        require(storedValue + increment <= 1000, "Value exceeds the allowed limit"); // Verifica el resultado
+        uint256 oldValue = storedValue; // Guardamos el valor antiguo
         storedValue += increment;
         valueHistory.push(storedValue); // Guardar en el historial
-        emit ValueUpdated(oldValue, storedValue); // Emitir evento
+        emit Incremented(oldValue, increment, storedValue); // Emitir evento
     }
 
     // Función para obtener el historial de valores

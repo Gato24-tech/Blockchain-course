@@ -1,26 +1,31 @@
-const fs = require("fs"); // Importa el módulo para escribir archivos
+const fs = require("fs");
+const hre = require("hardhat"); // Importar Hardhat Runtime Environment
 
 async function main() {
-    // Desplegar el contrato
     const AdvancedContract = await ethers.deployContract("AdvancedContract");
     await AdvancedContract.waitForDeployment();
 
-    // Obtener dirección del contrato y número de bloque
+    const network = hre.network.name; // Obtener la red actual
     const deploymentData = {
-        address: await AdvancedContract.getAddress(), // Dirección del contrato
-        blockNumber: (await AdvancedContract.deploymentTransaction()).blockNumber, // Bloque donde se desplegó
+        address: await AdvancedContract.getAddress(),
+        blockNumber: (await AdvancedContract.deploymentTransaction()).blockNumber,
     };
 
-    // Guardar los datos en el archivo deployments.json
-    const filePath = "deployments.json"; // Ruta del archivo (en la raíz del proyecto)
-    fs.writeFileSync(filePath, JSON.stringify(deploymentData, null, 2)); // Escribe el JSON con formato legible
+    // Leer datos existentes si el archivo ya existe
+    let deployments = {};
+    const filePath = "deployments.json";
+    if (fs.existsSync(filePath)) {
+        deployments = JSON.parse(fs.readFileSync(filePath, "utf-8"));
+    }
 
-    // Mensaje de éxito
+    // Actualizar datos para la red actual
+    deployments[network] = deploymentData;
+    fs.writeFileSync(filePath, JSON.stringify(deployments, null, 2));
+
     console.log("AdvancedContract deployed to:", deploymentData.address);
     console.log("Deployment data saved to:", filePath);
 }
 
-// Ejecutar el script y manejar errores
 main().catch((error) => {
     console.error(error);
     process.exitCode = 1;
