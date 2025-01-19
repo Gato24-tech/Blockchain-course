@@ -39,7 +39,7 @@ contract AdvancedContract {
 
     // Función para establecer un nuevo valor (solo propietario)
     function setValue(uint256 newValue) public onlyOwner {
-        require(newValue <= 1000, "Value exceeds allowed limit");
+        require(newValue <= 1000, "Value exceeds limit");
         uint256 oldValue = storedValue; // Guardamos el valor antiguo
         storedValue = newValue;
         valueHistory.push(newValue); // Guardar en el historial
@@ -48,8 +48,8 @@ contract AdvancedContract {
 
     // Función para incrementar el valor almacenado (solo propietario)
     function incrementValue(uint256 increment) public onlyOwner {
-        require(increment <= 1000, "Increment exceeds the allowed limit"); // Verifica el incremento mismo
-        require(storedValue + increment <= 1000, "Value exceeds the allowed limit"); // Verifica el resultado
+        require(increment <= 1000, "Increment exceeds limit"); // Verifica el incremento mismo
+        require(storedValue + increment <= 1000, "Value exceeds limit"); // Verifica el resultado
         uint256 oldValue = storedValue; // Guardamos el valor antiguo
         storedValue += increment;
         valueHistory.push(storedValue); // Guardar en el historial
