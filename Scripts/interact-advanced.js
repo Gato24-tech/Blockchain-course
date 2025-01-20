@@ -1,55 +1,55 @@
 const { ethers } = require("hardhat");
 
 async function main() {
-    const deployments = require('../deployments.json');
+    const deployments = require('../deployments.json'); // Dirección del contrato desplegado
     const contractAddress = deployments.localhost.address;
 
     const [owner, unauthorized] = await ethers.getSigners();
     const AdvancedContract = await ethers.getContractFactory("AdvancedContract");
     const contract = AdvancedContract.attach(contractAddress);
 
-    console.log(`Interaccionando con el contrato en: ${contractAddress}`);
+    console.log(`Interacting with the contract at: ${contractAddress}`);
 
     try {
-        // Obtener el valor inicial
+        // 1. Obtener el valor inicial
         let value = await contract.getValue();
-        console.log(`Valor inicial almacenado: ${value}`);
+        console.log(`Initial stored value: ${value}`);
 
-        // Actualizar el valor dentro del límite
+        // 2. Actualizar el valor dentro del límite
         await contract.connect(owner).setValue(42);
-        console.log(`Nuevo valor almacenado: 42`);
+        console.log(`Value updated to: 42`);
 
-        // Probar valor fuera del límite
+        // 3. Probar establecer un valor fuera del límite
         try {
             await contract.connect(owner).setValue(2000);
         } catch (error) {
-            console.error("Error esperado al intentar establecer un valor fuera del límite:", error.message);
+            console.error("Expected error when setting value outside the limit:", error.message);
         }
 
-        // Incrementar el valor dentro del límite
+        // 4. Incrementar el valor dentro del límite
         await contract.connect(owner).incrementValue(10);
         value = await contract.getValue();
-        console.log(`Valor después de incrementar: ${value}`);
+        console.log(`Value after increment: ${value}`);
 
-        // Probar incremento fuera del límite
+        // 5. Probar incrementar fuera del límite
         try {
             await contract.connect(owner).incrementValue(1000);
         } catch (error) {
-            console.error("Error esperado al intentar incrementar fuera del límite:", error.message);
+            console.error("Expected error when incrementing outside the limit:", error.message);
         }
 
-        // Intentar actualizar desde una cuenta no autorizada
+        // 6. Intentar actualizar desde una cuenta no autorizada
         try {
-            await contract.connect(unauthorized).incrementValue(2000);
+            await contract.connect(unauthorized).setValue(20);
         } catch (error) {
-            console.error("Error esperado al intentar actualizar desde una cuenta no autorizada:", error.message);
+            console.error("Expected error when updating from an unauthorized account:", error.message);
         }
 
-        // Obtener el historial de valores
+        // 7. Obtener el historial de valores
         const history = await contract.getValueHistory();
-        console.log(`Historial de valores: ${history}`);
+        console.log(`Value history: ${history.map((val) => val.toString()).join(", ")}`);
     } catch (error) {
-        console.error("Error en el script principal:", error);
+        console.error("Error in the main script:", error);
     }
 }
 

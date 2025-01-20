@@ -34,7 +34,7 @@ contract AdvancedContract {
 
     // Función para obtener el valor almacenado 
     function getValue() public view returns (uint256) {
-        return storedValue;
+        return storedValue; 
     }
 
     // Función para establecer un nuevo valor (solo propietario)
