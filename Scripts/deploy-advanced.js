@@ -1,29 +1,23 @@
-const fs = require("fs");
-const hre = require("hardhat"); // Importar Hardhat Runtime Environment
+const { ethers } = require("hardhat");
 
 async function main() {
-    const AdvancedContract = await ethers.deployContract("AdvancedContract");
-    await AdvancedContract.waitForDeployment();
+    const [deployer] = await ethers.getSigners();
+    console.log("Deploying contracts with the account:", deployer.address);
 
-    const network = hre.network.name; // Obtener la red actual
-    const deploymentData = {
-        address: await AdvancedContract.getAddress(),
-        blockNumber: (await AdvancedContract.deploymentTransaction()).blockNumber,
-    };
+    // Obtener la fábrica del contrato
+    const AdvancedContract = await ethers.getContractFactory("AdvancedContract");
 
-    // Leer datos existentes si el archivo ya existe
-    let deployments = {};
-    const filePath = "deployments.json";
-    if (fs.existsSync(filePath)) {
-        deployments = JSON.parse(fs.readFileSync(filePath, "utf-8"));
-    }
+    console.log("Deploying AdvancedContract...");
 
-    // Actualizar datos para la red actual
-    deployments[network] = deploymentData;
-    fs.writeFileSync(filePath, JSON.stringify(deployments, null, 2));
+    // Desplegar el contrato
+    const advancedContract = await AdvancedContract.deploy();
 
-    console.log("AdvancedContract deployed to:", deploymentData.address);
-    console.log("Deployment data saved to:", filePath);
+    // Esperar a que se complete el despliegue
+    await advancedContract.waitForDeployment();
+
+    // Obtener la dirección del contrato desplegado
+    const contractAddress = await advancedContract.getAddress();
+    console.log("AdvancedContract deployed at:", contractAddress);
 }
 
 main().catch((error) => {
