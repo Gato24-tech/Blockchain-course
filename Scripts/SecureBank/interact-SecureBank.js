@@ -15,7 +15,9 @@ async function main() {
     try {
         // 1. Obtener el balance inicial
         let balance = await contract.getBalance(owner.address);
-        console.log(`Balance inicial de owner: ${ethers.utils.formatEther(balance)} ETH`);
+        balance = ethers.BigNumber.from(balance || "0"); // Asegurarse de manejar null o undefined
+        console.log(`Raw balance: ${balance.toString()}`);
+        console.log(`Formatted balance: ${ethers.utils.formatEther(balance)} ETH`);
 
         // 2. Depositar ETH
         const depositAmount = ethers.utils.parseEther("1.0");
