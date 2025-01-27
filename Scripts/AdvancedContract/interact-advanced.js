@@ -1,7 +1,7 @@
 const { ethers } = require("hardhat");
 
 async function main() {
-    const deployments = require('../deployments.json'); // Dirección del contrato desplegado
+    const deployments = require('../../deployments.json'); // Dirección del contrato desplegado
     const contractAddress = deployments.localhost.address;
 
     const [owner, unauthorized] = await ethers.getSigners();
