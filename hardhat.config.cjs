@@ -1,4 +1,3 @@
-require("@nomicfoundation/hardhat-toolbox");
 require("dotenv").config();
 
 const { ALCHEMY_API_KEY, PRIVATE_KEY, ARBISCAN_API_KEY } = process.env;
