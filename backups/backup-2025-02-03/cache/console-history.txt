@@ -1,0 +1,61 @@
+console.log(`Nuevo balance del owner en ETH: ${ethers.utils.formatEther(newBalance)} ETH`);
+console.log(`Nuevo balance del owner: ${newBalance.toString()} wei`);
+const newBalance = await contract.getBalance(owner.address);
+console.log("Depósito realizado correctamente");
+await depositTx.wait();
+const depositTx = await contract.connect(owner).deposit({ value: ethers.utils.parseEther("1.0") });
+console.log(`Propietario del contrato: ${owner.address}`);
+console.log(`Contrato cargado en la dirección: ${contract.address}`);
+const [owner] = await ethers.getSigners();
+const contract = await SecureBank.attach("0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512");
+const SecureBank = await ethers.getContractFactory("SecureBank");
+.exit 
+exit 
+console.log(`Nuevo balance del owner en ETH: ${ethers.utils.formatEther(newBalance)} ETH`);
+console.log(`Nuevo balance del owner: ${newBalance.toString()} wei`);
+const newBalance = await contract.getBalance(owner.address);
+// Consultar el balance del propietario
+console.log("Depósito realizado correctamente");
+await depositTx.wait();
+const depositTx = await contract.connect(owner).deposit({ value: ethers.utils.parseEther("1.0") });
+// Realizar un depósito de 1 ETH
+console.log(`Propietario del contrato: ${owner.address}`);
+console.log(`Contrato cargado en la dirección: ${contract.address}`);
+const [owner] = await ethers.getSigners();
+// Obtener el signer (propietario)
+");
+const contract = await SecureBank.attach("0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512
+// Adjuntar el contrato desplegado a su dirección
+const SecureBank = await ethers.getContractFactory("SecureBank");
+// Cargar la fábrica del contrato
+npx hardhat console --network localhost
+.exit
+console.log(`Nuevo balance del owner en ETH: ${ethers.utils.formatEther(newBalance)} ETH`);
+console.log(`Nuevo balance del owner: ${newBalance.toString()} wei`);
+const newBalance = await contract.getBalance(owner.address);
+// Consultar el balance del propietario
+console.log("Depósito realizado correctamente");
+await depositTx.wait();
+const depositTx = await contract.connect(owner).deposit({ value: ethers.utils.parseEther("1.0") });
+// Realizar un depósito de 1 ETH
+console.log(`Propietario del contrato: ${owner.address}`);
+console.log(`Contrato cargado en la dirección: ${contract.address}`);
+const [owner] = await ethers.getSigners();
+// Obtener el signer (propietario)
+const contract = await SecureBank.attach("0x5FbDB2315678afecb367f032d93F642f64180aa3");
+// Adjuntar la dirección del contrato desplegado
+const SecureBank = await ethers.getContractFactory("SecureBank");
+// Cargar la fábrica del contrato
+console.log(`Nuevo balance: ${newBalance.toString()} (en wei)`);
+const newBalance = await contract.getBalance(owner.address);
+console.log("Depósito realizado correctamente");
+await depositTx.wait();
+const depositTx = await contract.connect(owner).deposit({ value: ethers.utils.parseEther("1.0") });
+// Realizar un depósito
+console.log(`Balance del owner: ${balance.toString()}`);
+const balance = await contract.getBalance(owner.address);
+// Verificar balance
+console.log(`Dirección del owner: ${owner.address}`);
+const [owner] = await ethers.getSigners();
+const contract = await SecureBank.attach("0x5FbDB2315678afecb367f032d93F642f64180aa3"); // Dirección del contrato
+const SecureBank = await ethers.getContractFactory("SecureBank");
