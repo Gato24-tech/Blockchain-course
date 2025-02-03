@@ -1,4 +1,5 @@
 const { ethers } = require("hardhat");
+const hre = require("hardhat");
 
 async function main() {
     const [deployer] = await ethers.getSigners();
@@ -13,7 +14,7 @@ async function main() {
     const advancedContract = await AdvancedContract.deploy();
 
     // Esperar a que se complete el despliegue
-    await advancedContract.waitForDeployment();
+    await advancedContract.deployed();
 
     // Obtener la dirección del contrato desplegado
     const contractAddress = await advancedContract.getAddress();
