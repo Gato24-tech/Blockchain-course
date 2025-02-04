@@ -1,4 +1,6 @@
 const hre = require("hardhat");
+const fs = require("fs");
+const path = require("path");
 
 async function main() {
     const [deployer] = await hre.ethers.getSigners();
@@ -15,7 +17,23 @@ async function main() {
 
     await advancedContract.waitForDeployment();
 
-    console.log("AdvancedContract deployed to:", advancedContract.target);
+    const contractAddress = advancedContract.target;
+    console.log("AdvancedContract deployed to:", contractAddress);
+
+    // Ruta al archivo de despliegues
+    const deploymentsFile = path.join(__dirname, "../../deployments.json");
+
+    // Cargar datos anteriores si existen
+    let deployments = {};
+    if (fs.existsSync(deploymentsFile)) {
+        deployments = JSON.parse(fs.readFileSync(deploymentsFile, "utf8"));
+    }
+
+    // Guardar la nueva dirección
+    deployments["AdvancedContract"] = contractAddress;
+    fs.writeFileSync(deploymentsFile, JSON.stringify(deployments, null, 2));
+
+    console.log("Deployment address saved to deployments.json");
 }
 
 main().catch((error) => {

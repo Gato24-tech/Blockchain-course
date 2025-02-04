@@ -1,23 +1,21 @@
-const { ethers } = require("hardhat");
+const hre = require("hardhat");
 
 async function main() {
-    const [deployer] = await ethers.getSigners();
+    const [deployer] = await hre.ethers.getSigners();
+
     console.log("Deploying contracts with the account:", deployer.address);
 
-    // Obtener la fábrica del contrato
-    const AdvancedContract = await ethers.getContractFactory("AdvancedContract");
+    const balance = await hre.ethers.provider.getBalance(deployer.address);
+    console.log("Account balance:", hre.ethers.formatEther(balance), "ETH");
 
-    console.log("Deploying AdvancedContract...");
+    const AdvancedContract = await hre.ethers.getContractFactory("AdvancedContract");
+    const advancedContract = await AdvancedContract.deploy({
+        gasLimit: 5000000, // Límite de gas
+    });
 
-    // Desplegar el contrato
-    const advancedContract = await AdvancedContract.deploy();
-
-    // Esperar a que se complete el despliegue
     await advancedContract.waitForDeployment();
 
-    // Obtener la dirección del contrato desplegado
-    const contractAddress = await advancedContract.getAddress();
-    console.log("AdvancedContract deployed at:", contractAddress);
+    console.log("AdvancedContract deployed to:", advancedContract.target);
 }
 
 main().catch((error) => {
