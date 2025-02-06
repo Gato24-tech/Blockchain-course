@@ -1,4 +1,5 @@
-const { ethers } = require("hardhat");
+const fs = require("fs");
+const path = require("path");
 
 async function main() {
   const [deployer] = await ethers.getSigners();
@@ -6,9 +7,10 @@ async function main() {
   console.log("Interacting with the contract using account:", deployer.address);
 
   // Cargar la dirección desde deployments.json
-  const deployments = require("../../deployments.json");
-  const contractAddress = deployments.localhost.address;
-  console.log("Contract address:", contractAddress);
+  const deploymentsPath = path.join(__dirname,"deployments.json");
+  const deployments = JSON.parse(fs.readFileSync(deploymentsPath, "utf-8"));
+
+  console.log("Contracto desplegado en:", deployments.address);
 
   // Adjuntar el contrato correcto
   const AdvancedContract = await ethers.getContractFactory("AdvancedContract");
