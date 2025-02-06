@@ -21,12 +21,13 @@ async function main() {
     console.log("AdvancedContract deployed to:", contractAddress);
 
     // Ruta al archivo de despliegues
-    const deploymentsFile = path.join(__dirname, "../../deployments.json");
+    const deploymentsPath = path.join(__dirname, "../../deployments.json");
+    fs.writeFileSync(deploymentsPath, JSON.stringify({address: contractAddress }, null, 2));
 
     // Cargar datos anteriores si existen
     let deployments = {};
-    if (fs.existsSync(deploymentsFile)) {
-        deployments = JSON.parse(fs.readFileSync(deploymentsFile, "utf8"));
+    if (fs.existsSync(deploymentsPath)) {
+        deployments = JSON.parse(fs.readFileSync(deploymentsPath, "utf8"));
     }
 
     // Guardar la nueva dirección

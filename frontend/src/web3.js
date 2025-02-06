@@ -1,6 +1,16 @@
 import { ethers } from "ethers";
 import deployments from "./deployments.json";
 
+async function getDeployements() {
+  const response = await fetch("/deployments.json");
+  return response.json();
+}
+
+getDeployements().then(data => {
+  console.log("contrato desplegado en:", data.address);  
+});
+
+
 const connectWallet = async () => {
   if (!window.ethereum) {
     alert("MetaMask no está instalado");
