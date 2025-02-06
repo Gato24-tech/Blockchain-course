@@ -5,24 +5,29 @@ async function main() {
 
   console.log("Interacting with the contract using account:", deployer.address);
 
-  // Dirección del contrato desplegado
-  const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3"; // Usa la dirección que se imprimió al desplegar
+  // Cargar la dirección desde deployments.json
+  const deployments = require("../../deployments.json");
+  const contractAddress = deployments.localhost.address;
+  console.log("Contract address:", contractAddress);
 
-  // Obtén la fábrica del contrato y adjunta la dirección desplegada
-  const SimpleStorage = await ethers.getContractFactory("SimpleStorage");
-  const simpleStorage = SimpleStorage.attach(contractAddress);
+  // Adjuntar el contrato correcto
+  const AdvancedContract = await ethers.getContractFactory("AdvancedContract");
+  const advancedContract = AdvancedContract.attach(contractAddress);
 
-  // Llama a la función `get` para obtener el valor inicial
-  const currentValue = await simpleStorage.get();
+  // 📌 Verificar las funciones disponibles
+  console.log("Available contract functions:", Object.keys(advancedContract));
+
+  // Obtener el valor almacenado
+  const currentValue = await advancedContract.getValue();
   console.log("Current stored value:", currentValue.toString());
 
-  // Llama a la función `set` para cambiar el valor
-  const tx = await simpleStorage.set(42);
-  await tx.wait(); // Espera a que se mine la transacción
+  // Cambiar el valor almacenado
+  const tx = await advancedContract.setValue(42);
+  await tx.wait();
   console.log("Value updated to 42.");
 
-  // Verifica el nuevo valor
-  const updatedValue = await simpleStorage.get();
+  // Verificar el nuevo valor
+  const updatedValue = await advancedContract.getValue();
   console.log("Updated stored value:", updatedValue.toString());
 }
 
