@@ -1,38 +1,50 @@
 import { ethers } from "ethers";
-import deployments from "./deployments.json";
+import deployments from "../deployments.json"; // Asegúrate de la ruta correcta
 
-async function getDeployements() {
-  const response = await fetch("/deployments.json");
-  return response.json();
+async function getDeployments() {
+  const response = await fetch(`/deployments.json`)
+  if (!response.ok) {
+    throw new error(`HTTP error! Status: ${response.status}`);
 }
-
-getDeployements().then(data => {
-  console.log("contrato desplegado en:", data.address);  
-});
+const deployments = await response.json();
+return deployments;
+}
 
 
 const connectWallet = async () => {
   if (!window.ethereum) {
     alert("MetaMask no está instalado");
-    return;
+    return null;
   }
 
-  const provider = new ethers.BrowserProvider(window.ethereum);
-  const signer = await provider.getSigner();
-  console.log("Conectado con:", await signer.getAddress());
-  return signer;
+  try {
+    // Solicitar acceso a MetaMask
+    const provider = new ethers.BrowserProvider(window.ethereum);
+    const signer = await provider.getSigner();
+    const account = await signer.getAddress();
+
+    console.log("Cuenta conectada:", account);
+    return { provider, signer, account };
+  } catch (error) {
+    console.error("Error conectando con MetaMask:", error);
+    return null;
+  }
 };
 
 const getContract = async () => {
-  const signer = await connectWallet();
-  if (!signer) return null;
+  const { provider, signer } = await connectWallet();
+  if (!provider || !signer) return null;
 
-  const contract = new ethers.Contract(
-    deployments.contractAddress,
-    deployments.abi,
-    signer
-  );
+  const contractAddress = deployments.contractAddress; // Verifica la clave correcta en deployments.json
+  const contractABI = deployments.abi; // Verifica la clave correcta en deployments.json
 
+  if (!contractAddress || !contractABI) {
+    console.error("No se encontró la dirección o ABI del contrato en deployments.json");
+    return null;
+  }
+
+  const contract = new ethers.Contract(contractAddress, contractABI, signer);
+  console.log("Contrato conectado:", contract);
   return contract;
 };
 

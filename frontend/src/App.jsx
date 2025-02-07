@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { connectWallet, getContract } from "./web3";
+import { connectWallet, getContract } from "./src/web3";
+
 
 function App() {
   const [account, setAccount] = useState(null);

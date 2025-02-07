@@ -4,6 +4,9 @@ const path = require("path");
 
 async function main() {
     const [deployer] = await hre.ethers.getSigners();
+    
+    const frontendPath = path.join(__dirname, "frontend/public/deployments.json");
+fs.copyFileSync(deploymentsPath, frontendPath);
 
     console.log("Deploying contracts with the account:", deployer.address);
 
