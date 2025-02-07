@@ -1,6 +1,7 @@
-const hre = require("hardhat");
-const fs = require("fs");
-const path = require("path");
+/* eslint-disable no-undef */
+import hre from "hardhat";
+import fs from "fs";
+import path from "path";
 
 async function main() {
     const [deployer] = await hre.ethers.getSigners();
