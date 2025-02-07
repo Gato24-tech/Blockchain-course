@@ -1,4 +1,6 @@
-const hre = require("hardhat");
+/* eslint-disable no-undef */
+
+import hre  from "hardhat";
 
 async function main() {
     const [deployer] = await hre.ethers.getSigners();

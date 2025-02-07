@@ -1,7 +1,8 @@
-const { ethers } = require("hardhat");
+/* eslint-disable no-undef */
+import ethers from "hardhat";
 
 async function main() {
-    const deployments = require('../../deployments.json'); // Dirección del contrato desplegado
+    const deployments = import('../../deployments.json'); // Dirección del contrato desplegado
     const contractAddress = deployments.localhost.address;
 
     const [owner, unauthorized] = await ethers.getSigners();
