@@ -1,15 +1,17 @@
 import { ethers } from "ethers";
-import deployments from "../deployments.json"; // Asegúrate de la ruta correcta
 
-async function getDeployments() {
-  const response = await fetch(`/deployments.json`)
+async function _getDeployments() {  
+  try {
+  const response = await fetch(`/deployments.json`);
   if (!response.ok) {
-    throw new error(`HTTP error! Status: ${response.status}`);
+    throw new Error(`HTTP error! Status: ${response.status}`);
 }
-const deployments = await response.json();
-return deployments;
+return await response.json(); 
+} catch (error) {
+  console.error("Error obtenido deployments:",error);
+  return null; 
 }
-
+}
 
 const connectWallet = async () => {
   if (!window.ethereum) {
@@ -35,17 +37,15 @@ const getContract = async () => {
   const { provider, signer } = await connectWallet();
   if (!provider || !signer) return null;
 
-  const contractAddress = deployments.contractAddress; // Verifica la clave correcta en deployments.json
-  const contractABI = deployments.abi; // Verifica la clave correcta en deployments.json
+const deployments = await _getDeployments();
+if (!deployments || !deployments.contractAddress || !deployments.abi) {
+  console.error("No se encontró la direccion o ABI del contrato en deployments.json");
+  return null;
+}
 
-  if (!contractAddress || !contractABI) {
-    console.error("No se encontró la dirección o ABI del contrato en deployments.json");
-    return null;
-  }
-
-  const contract = new ethers.Contract(contractAddress, contractABI, signer);
-  console.log("Contrato conectado:", contract);
-  return contract;
+const contract = new ethers.Contract(deployments.contractAddress, deployments.abi, signer);
+console.log("Contrato conectado:", contract);
+return contract;
 };
 
 export { connectWallet, getContract };
