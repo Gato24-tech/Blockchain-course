@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { connectWallet, getContract } from "/web3"; // Utilizaremos la variante en un futuro
- 
+import { connectWallet, getContract } from "./web3"; // eslint-disable-line no-unused-vars
 
 
 function App() {
