@@ -2,12 +2,16 @@
 import hre from "hardhat";
 import fs from "fs";
 import path from "path";
+import process from "process";
+
 
 async function main() {
     const [deployer] = await hre.ethers.getSigners();
     
-    const frontendPath = path.join(__dirname, "frontend/public/deployments.json");
-fs.copyFileSync(deploymentsPath, frontendPath);
+    import { fileURLToPath } from "url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const frontendPath = path.join(__dirname, "frontend/public/deployments.json");
 
     console.log("Deploying contracts with the account:", deployer.address);
 
@@ -26,7 +30,7 @@ fs.copyFileSync(deploymentsPath, frontendPath);
 
     // Ruta al archivo de despliegues
     const deploymentsPath = path.join(__dirname, "../../deployments.json");
-    fs.writeFileSync(deploymentsPath, JSON.stringify({address: contractAddress }, null, 2));
+    fs.writeFileSync(deploymentsPath, JSON.stringify(deployments, null, 2));
 
     // Cargar datos anteriores si existen
     let deployments = {};
