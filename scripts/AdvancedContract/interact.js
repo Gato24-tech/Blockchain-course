@@ -5,6 +5,14 @@ import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const deploymentsPath = path.join(__dirname, "../../frontend/public/deployments.json");
+
+//Leer la dirección del contrato
+const deployments = JSON.parse(fs.readFileSync(deploymentsPath, utf8));
+const contractAddress = deployments.advancedContract;
+
+console.log("Contrato desplegado en:", contractAddress);
+
 async function main() {
   const [deployer] = await ethers.getSigners();
 
