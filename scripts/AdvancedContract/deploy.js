@@ -5,10 +5,9 @@ const hre = require("hardhat");
 const fs = require("fs");
 const path = require("path");
 
+
 // Definir __dirname en caso de ESM
-import { fileURLToPath } from "url";
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __dirname = path.resolve();
 
 async function main() {
     const [deployer] = await hre.ethers.getSigners();
@@ -21,14 +20,12 @@ async function main() {
     const advancedContract = await AdvancedContract.deploy({ gasLimit: 5000000 });
     await advancedContract.waitForDeployment();
 
-    const contractAddress = advancedContract.target;
+    const contractAddress = advacedntract.target;
     console.log("AdvancedContract deployed to:", contractAddress);
 
-    // Ruta al archivo de despliegues
-    const deploymentsPath = path.join(__dirname, "../../deployments.json");
-    fs.writeFileSync(deploymentsPath, JSON.stringify({ address: contractAddress }, null, 2));
-
-    // Cargar datos anteriores si existen
+    // Ruta al archivo de desployments.json en la raíz del proyecto
+    const deploymentsPath = path.join(__dirname, "deployments.json");
+    
     let deployments = {};
     if (fs.existsSync(deploymentsPath)) {
         deployments = JSON.parse(fs.readFileSync(deploymentsPath, "utf8"));
@@ -39,6 +36,11 @@ async function main() {
     fs.writeFileSync(deploymentsPath, JSON.stringify(deployments, null, 2));
 
     console.log("Deployment address saved to deployments.json");
+
+    //copiar deployment.json al frontend
+    const frontendPath = path.join(__dirname, "frontend/public/deployments,json");
+    fs.copyFileSync(deploymentsPath, frontendPath);
+    console.log("Deployments address coied to frontend/public/deployments.json");
 }
 
 // Manejo de errores
