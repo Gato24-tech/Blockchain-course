@@ -1,28 +1,24 @@
 /* eslint-disable no-undef */
-import hre from "hardhat";
-import fs from "fs";
-import path from "path";
-import process from "process";
+/* eslint-disable @typescript-eslint/no-require-imports */
 
+const hre = require("hardhat");
+const fs = require("fs");
+const path = require("path");
+
+// Definir __dirname en caso de ESM
+import { fileURLToPath } from "url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 async function main() {
     const [deployer] = await hre.ethers.getSigners();
-    
-    import { fileURLToPath } from "url";
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const frontendPath = path.join(__dirname, "frontend/public/deployments.json");
 
     console.log("Deploying contracts with the account:", deployer.address);
-
     const balance = await hre.ethers.provider.getBalance(deployer.address);
     console.log("Account balance:", hre.ethers.formatEther(balance), "ETH");
 
     const AdvancedContract = await hre.ethers.getContractFactory("AdvancedContract");
-    const advancedContract = await AdvancedContract.deploy({
-        gasLimit: 5000000, // Límite de gas
-    });
-
+    const advancedContract = await AdvancedContract.deploy({ gasLimit: 5000000 });
     await advancedContract.waitForDeployment();
 
     const contractAddress = advancedContract.target;
@@ -30,7 +26,7 @@ const frontendPath = path.join(__dirname, "frontend/public/deployments.json");
 
     // Ruta al archivo de despliegues
     const deploymentsPath = path.join(__dirname, "../../deployments.json");
-    fs.writeFileSync(deploymentsPath, JSON.stringify(deployments, null, 2));
+    fs.writeFileSync(deploymentsPath, JSON.stringify({ address: contractAddress }, null, 2));
 
     // Cargar datos anteriores si existen
     let deployments = {};
@@ -40,11 +36,12 @@ const frontendPath = path.join(__dirname, "frontend/public/deployments.json");
 
     // Guardar la nueva dirección
     deployments["AdvancedContract"] = contractAddress;
-    fs.writeFileSync(deploymentsFile, JSON.stringify(deployments, null, 2));
+    fs.writeFileSync(deploymentsPath, JSON.stringify(deployments, null, 2));
 
     console.log("Deployment address saved to deployments.json");
 }
 
+// Manejo de errores
 main().catch((error) => {
     console.error(error);
     process.exitCode = 1;
