@@ -3,13 +3,16 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const deploymentsPath = path.join(__dirname, "../../frontend/public/deployments.json");
+if (!contractAddress) {
+  throw new Error("No se encontró la dirección del contrato en deployments.json");
+}
+
+
+const deploymentsPath = path.join(__dirname, "frontend/public/deployments.json");
 
 //Leer la dirección del contrato
-const deployments = JSON.parse(fs.readFileSync(deploymentsPath, utf8));
-const contractAddress = deployments.advancedContract;
+const deployments = JSON.parse(fs.readFileSync(deploymentsPath, "utf8"));
+const contractAddress = deployments[advancedContract];
 
 console.log("Contrato desplegado en:", contractAddress);
 
@@ -18,11 +21,6 @@ async function main() {
 
   console.log("Interacting with the contract using account:", deployer.address);
 
-  // Cargar la dirección desde deployments.json
-  const deploymentsPath = path.join(__dirname,"deployments.json");
-  const deployments = JSON.parse(fs.readFileSync(deploymentsPath, "utf-8"));
-
-  console.log("Contracto desplegado en:", deployments.address);
 
   // Adjuntar el contrato correcto
   const AdvancedContract = await ethers.getContractFactory("AdvancedContract");
