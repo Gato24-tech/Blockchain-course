@@ -1,8 +1,14 @@
 /* eslint-disable no-undef */
 import fs from "fs";
 import path from "path";
-import hardhat from "hardhat"; // Importar Hardhat en ES Modules
-const { ethers } = hardhat; // Extraer ethers
+import { fileURLToPath } from "url";
+import hardhat from "hardhat";
+
+const { ethers } = hardhat;
+
+// Definir __dirname manualmente
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 async function main() {
   const [deployer] = await ethers.getSigners();
