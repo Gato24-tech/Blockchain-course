@@ -1,30 +1,41 @@
+/* eslint-disable no-undef */
+ 
+
 import fs from "fs";
 import path from "path";
-import { fileURLToPath } from "url";
-import process from "process";
-
-
-// Definir __dirname en ES Module
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import { ethers } from "hardhat";
 
 async function main() {
-    const deploymentsPath = path.join(__dirname, "deployments.json");
-    const frontendDir = path.join(__dirname, "frontend/public"); // ⬅️ Declaramos frontendDir correctamente
+  const [deployer] = await ethers.getSigners();
+  console.log("Deploying contract with account:", deployer.address);
 
-    // Verifica si el directorio frontend/public existe, si no, lo crea
-    if (!fs.existsSync(frontendDir)) {
-        fs.mkdirSync(frontendDir, { recursive: true });
+  const AdvancedContract = await ethers.getContractFactory("AdvancedContract");
+  const advancedContract = await AdvancedContract.deploy();
+  await advancedContract.waitForDeployment();
+
+  const contractAddress = await advancedContract.getAddress();
+  console.log("Contract deployed to:", contractAddress);
+
+  // Guardar en deployments.json
+  const deploymentsPath = path.join(__dirname, "../../frontend/public/deployments.json");
+
+  // Verificar si el directorio existe, si no, crearlo
+  const deploymentsDir = path.dirname(deploymentsPath);
+  if (!fs.existsSync(deploymentsDir)) {
+    fs.mkdirSync(deploymentsDir, { recursive: true });
+  }
+
+  const deploymentData = {
+    localhost: {
+      address: contractAddress,
     }
+  };
 
-    const frontendPath = path.join(frontendDir, "deployments.json");
-    
-    // Copia el archivo de deployments.json
-    fs.copyFileSync(deploymentsPath, frontendPath);
-    console.log("Deployment address copied to frontend/public/deployments.json");
+  fs.writeFileSync(deploymentsPath, JSON.stringify(deploymentData, null, 2));
+  console.log("Deployment address saved to:", deploymentsPath);
 }
 
 main().catch((error) => {
-    console.error(error);
-    process.exit(1);
+  console.error(error);
+  process.exitCode = 1;
 });

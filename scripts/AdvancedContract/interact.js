@@ -2,17 +2,23 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import hardhat from "hardhat"; // Importar Hardhat en ES Modules
+const { ethers } = hardhat; // Extraer ethers
+
+// Obtener __dirname en ES Modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const deploymentsPath = path.join(__dirname, "frontend/public/deployments.json");
+
+// Leer el archivo deployments.json
+const deployments = JSON.parse(fs.readFileSync(deploymentsPath, "utf8"));
+
+const contractAddress = deployments["AdvancedContract"]; // CORREGIDO
 
 if (!contractAddress) {
   throw new Error("No se encontró la dirección del contrato en deployments.json");
 }
-
-
-const deploymentsPath = path.join(__dirname, "frontend/public/deployments.json");
-
-//Leer la dirección del contrato
-const deployments = JSON.parse(fs.readFileSync(deploymentsPath, "utf8"));
-const contractAddress = deployments[advancedContract];
 
 console.log("Contrato desplegado en:", contractAddress);
 
@@ -21,13 +27,13 @@ async function main() {
 
   console.log("Interacting with the contract using account:", deployer.address);
 
-
   // Adjuntar el contrato correcto
   const AdvancedContract = await ethers.getContractFactory("AdvancedContract");
   const advancedContract = AdvancedContract.attach(contractAddress);
 
   // 📌 Verificar las funciones disponibles
-  console.log("Available contract functions:", Object.keys(advancedContract));
+  console.log("Contract ABI Functions:", advancedContract.interface.fragments.map(f => f.name));
+
 
   // Obtener el valor almacenado
   const currentValue = await advancedContract.getValue();
