@@ -38,12 +38,12 @@ const getContract = async () => {
   if (!provider || !signer) return null;
 
 const deployments = await _getDeployments();
-if (!deployments || !deployments.contractAddress || !deployments.abi) {
+if (!deployments || !deployments.localhost?.address || !deployments.abi) {
   console.error("No se encontró la direccion o ABI del contrato en deployments.json");
   return null;
 }
 
-const contract = new ethers.Contract(deployments.contractAddress, deployments.abi, signer);
+const contract = new ethers.Contract(deployments.localhost.address, deployments.abi, signer);
 console.log("Contrato conectado:", contract);
 return contract;
 };
