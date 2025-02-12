@@ -1,14 +1,9 @@
 /* eslint-disable no-undef */
 import fs from "fs";
 import path from "path";
-import { fileURLToPath } from "url";
 import hardhat from "hardhat";
 
 const { ethers } = hardhat;
-
-// Definir __dirname manualmente
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 async function main() {
   const [deployer] = await ethers.getSigners();
@@ -21,23 +16,42 @@ async function main() {
   const contractAddress = await advancedContract.getAddress();
   console.log("Contract deployed to:", contractAddress);
 
-  // Guardar en deployments.json
-  const deploymentsPath = path.join(__dirname, "../../frontend/public/deployments.json");
+  // ✅ Ruta corregida para obtener el ABI del contrato
+  const artifactsPath = path.join(
+    path.resolve(),
+    "artifacts",
+    "contracts",
+    "AdvancedContract.sol",
+    "AdvancedContract.json"
+  );
 
-  // Verificar si el directorio existe, si no, crearlo
+  if (!fs.existsSync(artifactsPath)) {
+    throw new Error(`No se encontró el archivo ABI en ${artifactsPath}`);
+  }
+
+  // ✅ Leer el ABI desde el archivo JSON
+  const contractArtifact = JSON.parse(fs.readFileSync(artifactsPath, "utf8"));
+  const contractABI = contractArtifact.abi;
+
+  // ✅ Ruta corregida para guardar deployments.json
+  const deploymentsPath = path.join(path.resolve(), "frontend/public/deployments.json");
+
+  // ✅ Verificar si el directorio existe, si no, crearlo
   const deploymentsDir = path.dirname(deploymentsPath);
   if (!fs.existsSync(deploymentsDir)) {
     fs.mkdirSync(deploymentsDir, { recursive: true });
   }
 
+  // ✅ Crear el objeto de despliegue con la dirección y ABI
   const deploymentData = {
     localhost: {
       address: contractAddress,
-    }
+      abi: contractABI, // ✅ Guardamos el ABI correctamente
+    },
   };
 
   fs.writeFileSync(deploymentsPath, JSON.stringify(deploymentData, null, 2));
-  console.log("Deployment address saved to:", deploymentsPath);
+  console.log("Deployment address and ABI saved to:", deploymentsPath);
 }
 
 main().catch((error) => {
