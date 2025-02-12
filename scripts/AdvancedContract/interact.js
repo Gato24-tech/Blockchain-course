@@ -38,7 +38,13 @@ async function main() {
   const AdvancedContract = await ethers.getContractFactory("AdvancedContract");
   const advancedContract = AdvancedContract.attach(contractAddress);
 
-  console.log("Available contract functions:", Object.keys(advancedContract));
+  console.log("Available contract functions:", advancedContract.interface.fragments.map(f => f.name));
+
+  const tx = await advancedContract.setValue(42);  // Cambia el valor a 42
+await tx.wait(); // Esperar confirmación
+
+  const updatedValue = await advancedContract.getValue();
+  console.log("Updated stored value:", updatedValue.toString());
 
   // Obtener el valor almacenado
   const currentValue = await advancedContract.getValue();
