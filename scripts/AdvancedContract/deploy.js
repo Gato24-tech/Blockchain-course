@@ -1,9 +1,8 @@
 /* eslint-disable no-undef */
- 
-
 import fs from "fs";
 import path from "path";
-import { ethers } from "hardhat";
+import hardhat from "hardhat"; // Importar Hardhat en ES Modules
+const { ethers } = hardhat; // Extraer ethers
 
 async function main() {
   const [deployer] = await ethers.getSigners();
