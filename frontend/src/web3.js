@@ -1,51 +1,29 @@
 import { ethers } from "ethers";
-
-async function _getDeployments() {  
-  try {
-  const response = await fetch(`/deployments.json`);
-  if (!response.ok) {
-    throw new Error(`HTTP error! Status: ${response.status}`);
-}
-return await response.json(); 
-} catch (error) {
-  console.error("Error obtenido deployments:",error);
-  return null; 
-}
-}
+import deployments from "./deployments.json";
 
 const connectWallet = async () => {
   if (!window.ethereum) {
     alert("MetaMask no está instalado");
-    return null;
+    return;
   }
 
-  try {
-    // Solicitar acceso a MetaMask
-    const provider = new ethers.BrowserProvider(window.ethereum);
-    const signer = await provider.getSigner();
-    const account = await signer.getAddress();
-
-    console.log("Cuenta conectada:", account);
-    return { provider, signer, account };
-  } catch (error) {
-    console.error("Error conectando con MetaMask:", error);
-    return null;
-  }
+  const provider = new ethers.BrowserProvider(window.ethereum);
+  const signer = await provider.getSigner();
+  console.log("Conectado con:", await signer.getAddress());
+  return signer;
 };
 
 const getContract = async () => {
-  const { provider, signer } = await connectWallet();
-  if (!provider || !signer) return null;
+  const signer = await connectWallet();
+  if (!signer) return null;
 
-const deployments = await _getDeployments();
-if (!deployments || !deployments.localhost?.address || !deployments.abi) {
-  console.error("No se encontró la direccion o ABI del contrato en deployments.json");
-  return null;
-}
+  const contract = new ethers.Contract(
+    deployments.contractAddress,
+    deployments.abi,
+    signer
+  );
 
-const contract = new ethers.Contract(deployments.localhost.address, deployments.abi, signer);
-console.log("Contrato conectado:", contract);
-return contract;
+  return contract;
 };
 
 export { connectWallet, getContract };
