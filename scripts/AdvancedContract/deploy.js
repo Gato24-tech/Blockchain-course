@@ -23,7 +23,7 @@ async function main() {
 
   // Guardar en deployments.json
   const deploymentsPath = path.join(__dirname, "../../frontend/public/deployments.json");
-
+  
   // Verificar si el directorio existe, si no, crearlo
   const deploymentsDir = path.dirname(deploymentsPath);
   if (!fs.existsSync(deploymentsDir)) {

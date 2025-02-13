@@ -1,13 +1,19 @@
 import { ethers } from "ethers";
 import fs from "fs";
 import process from "process";
+import path from "path";
+import { fileURLToPath } from "url";
 
 async function main() {
     const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
 
-    // Cargar deployments.json para obtener la dirección y ABI del contrato
-    const deploymentsPath = "./frontend/public/deployments.json"; // Ajusta la ruta si es necesario
+    // Definir __dirname
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = path.dirname(__filename);
 
+    // Cargar deployments.json para obtener la dirección y ABI del contrato
+       const deploymentsPath = path.join(__dirname, "../../frontend/public/deployments.json");
+    
     if (!fs.existsSync(deploymentsPath)) {
         console.error("Error: No se encontró deployments.json.");
         process.exit(1);
