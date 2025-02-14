@@ -19,6 +19,8 @@ async function main() {
   await advancedContract.waitForDeployment();
 
   const contractAddress = await advancedContract.getAddress();
+  const contractABI = AdvancedContract.interface.formatJson(); // Guardamos el ABI
+
   console.log("Contract deployed to:", contractAddress);
 
   // Guardar en deployments.json
@@ -33,11 +35,12 @@ async function main() {
   const deploymentData = {
     localhost: {
       address: contractAddress,
+      abi: contractABI, // Ahora también guardamos el ABI
     }
   };
 
   fs.writeFileSync(deploymentsPath, JSON.stringify(deploymentData, null, 2));
-  console.log("Deployment address saved to:", deploymentsPath);
+  console.log("Deployment data saved to:", deploymentsPath);
 }
 
 main().catch((error) => {
