@@ -1,46 +1,41 @@
-/* eslint-disable no-undef */
+import { ethers } from "ethers";
 import fs from "fs";
+import process from "process";
 import path from "path";
 import { fileURLToPath } from "url";
-import hardhat from "hardhat";
 
-const { ethers } = hardhat;
-
-// Definir __dirname manualmente
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const deploymentsPath = path.join(__dirname, "../../frontend/public/deployments.json");
 
 async function main() {
-  const [deployer] = await ethers.getSigners();
-  console.log("Deploying contract with account:", deployer.address);
+    const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
 
-  const AdvancedContract = await ethers.getContractFactory("AdvancedContract");
-  const advancedContract = await AdvancedContract.deploy();
-  await advancedContract.waitForDeployment();
-
-  const contractAddress = await advancedContract.getAddress();
-  console.log("Contract deployed to:", contractAddress);
-
-  // Guardar en deployments.json
-  const deploymentsPath = path.join(__dirname, "../../frontend/public/deployments.json");
-  
-  // Verificar si el directorio existe, si no, crearlo
-  const deploymentsDir = path.dirname(deploymentsPath);
-  if (!fs.existsSync(deploymentsDir)) {
-    fs.mkdirSync(deploymentsDir, { recursive: true });
-  }
-
-  const deploymentData = {
-    localhost: {
-      address: contractAddress,
+    if (!fs.existsSync(deploymentsPath)) {
+        console.error("Error: No se encontró deployments.json.");
+        process.exit(1);
     }
-  };
 
-  fs.writeFileSync(deploymentsPath, JSON.stringify(deploymentData, null, 2));
-  console.log("Deployment address saved to:", deploymentsPath);
+    const deployments = JSON.parse(fs.readFileSync(deploymentsPath, "utf-8"));
+
+    // Extraer información desde localhost
+    if (!deployments.localhost || !deployments.localhost.address || !deployments.localhost.abi) {
+        console.error("Error: No se encontró la dirección o el ABI en deployments.json.");
+        process.exit(1);
+    }
+
+    const contractAddress = deployments.localhost.address;
+    const contractABI = deployments.localhost.abi;
+
+    // Crear la instancia del contrato
+    const contract = new ethers.Contract(contractAddress, contractABI, provider);
+
+    // Llamar a la función del contrato
+    const value = await contract.getValue();
+    console.log("El valor almacenado es:", value.toString());
 }
 
 main().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
+    console.error(error);
+    process.exit(1);
 });
